@@ -34,18 +34,12 @@ const Statistics =({good,neutral,bad}) =>{
     )
   }
 
-/* const Button = (props) =>{
-  return (
-    <div>
+  const Button = (props) =>{
+   return (
       <button onClick={props.onClick}>{props.text}</button>  
-    </div>
   )
-  } */
+  }
   const App = () => {
-{/* <Button onClick={addGood} text="good"></Button>
-<Button onClick={addNeutral} text="Neutral"></Button>
-
-<Button onClick={addBad} text="bad"></Button> */}
   
     const [good, setGood] = useState(0)
     const [neutral, setNeutral] = useState(0)
@@ -67,16 +61,11 @@ const Statistics =({good,neutral,bad}) =>{
     return (  
     <div>
       <h1>give feeback</h1>
-      <button onClick={addGood}>
-        good
-      </button>
-      <button onClick={addNeutral}>
-        neutral
-      </button>
-      <button onClick={addBad}>
-        bad
-      </button>
 
+      <Button onClick={addGood} text="good"></Button>
+      <Button onClick={addNeutral} text="Neutral"></Button>
+      <Button onClick={addBad} text="bad"></Button>
+      
       <h1>statistics</h1>
 
       <Statistics good={good} bad={bad} neutral={neutral}></Statistics>
