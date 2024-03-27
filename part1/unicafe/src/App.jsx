@@ -1,11 +1,12 @@
 import { useState } from 'react'
 
-
 const StatisticsLine =(props) =>{
   return(
-    <div>
-      {props.text} {props.value} {props.porciento}
-    </div>
+    <tr>
+      <th>{props.text}</th> 
+      <th>{props.value}</th>
+    </tr>
+
   )
 }
 const Statistics =({good,neutral,bad}) =>{
@@ -20,16 +21,22 @@ const Statistics =({good,neutral,bad}) =>{
     if(all==0){return 0}
     return (good*100)/all}      
 
-    if (all==0){
+  if (all==0){
       return(<div>no feedback given</div>)
     }
+
     return(
       <div>
-        <StatisticsLine text="good" value={good}></StatisticsLine>
-        <StatisticsLine text="neutral" value={neutral}></StatisticsLine>
-        <StatisticsLine text="bad" value={bad}></StatisticsLine>
-        <StatisticsLine text="average" value={average()}></StatisticsLine>
-        <StatisticsLine text="positive" value={positive()} porciento="%"></StatisticsLine>
+        <table>
+            <tbody>
+             <StatisticsLine text="good" value={good}></StatisticsLine>
+             <StatisticsLine text="neutral" value={neutral}></StatisticsLine>
+             <StatisticsLine text="bad" value={bad}></StatisticsLine>
+             <StatisticsLine text="all" value={all}></StatisticsLine>
+             <StatisticsLine text="average" value={average()} ></StatisticsLine>
+             <StatisticsLine text="positive" value={`${parseFloat(positive())} %`}></StatisticsLine>
+          </tbody>
+        </table>
       </div>
     )
   }
@@ -60,6 +67,7 @@ const Statistics =({good,neutral,bad}) =>{
 
     return (  
     <div>
+
       <h1>give feeback</h1>
 
       <Button onClick={addGood} text="good"></Button>
