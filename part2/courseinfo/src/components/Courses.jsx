@@ -22,6 +22,10 @@ const Content = ({parts}) =>
     
 const Part = ({part}) =><div> {part.name}: {part.exercises}</div>
 
-const Total = ({parts}) =><b>total of {parts[0].exercises+parts[1].exercises+parts[2].exercises+parts[3].exercises } exercises</b>
+const Total = ({parts}) =>{
+        const total = parts.map(e =>e.exercises).reduce((a,b) => a+b)
+        console.log("total",total)
+        return <b>total of {total} exercises</b>
+}
 
 export default Course;
