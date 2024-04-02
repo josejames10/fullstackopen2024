@@ -45,11 +45,10 @@ const App = () => {
       ]
     }
   ]
-
+  const courseTotal = courses.map(e => <Course key={e.id} course={e}/>)
   return (
     <div>
-      <Course course={courses[0]}></Course>
-      <Course course={courses[1]}></Course>
+      {courseTotal}
     </div>
   )
 }
