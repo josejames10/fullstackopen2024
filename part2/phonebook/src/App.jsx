@@ -29,7 +29,7 @@ const Persons = ({ filter }) => {
   return (
     <div>
       {filter.map((e) => (
-        <Contact name={e.name} number={e.number} key={e.id}></Contact>
+        <Contact name={e.name} number={e.number}></Contact>
       ))}
     </div>
   );
@@ -58,20 +58,28 @@ const App = () => {
     : persons;
   console.log(filter);
 
-  const add = (e) => {
-    e.preventDefault();
-    const newObjeto = { name: newName, id: persons.length, number: newNumber };
+  const add = (event) => {
+    event.preventDefault();
     let pre = true;
     persons.map((e) => {
+      console.log("new name:", newName);
       if (e.name === newName) {
-        console.log("nombre usado");
         pre = false;
       }
     });
+    const newObjeto = { name: newName, number: newNumber };
+
     pre
-      ? setPersons(persons.concat(newObjeto))
+      ? axios
+          .post("http://localhost:3001/persons", newObjeto)
+          .then((response) => {
+            setPersons(persons.concat(response.data));
+            setNewName("");
+            setNewNumber("");
+          })
       : alert(`${newName} is already added to phonebook`);
   };
+  console.log(persons);
 
   return (
     <div>
