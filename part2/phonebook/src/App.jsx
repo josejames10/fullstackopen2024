@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Contact from "./components/Contact";
+import personServices from "./services/persons";
 import axios from "axios";
 
 const Filter = ({ handleFilter }) => {
@@ -25,11 +26,17 @@ const PersonsForm = ({ add, handleNewName, handleNewNumber }) => {
     </form>
   );
 };
-const Persons = ({ filter }) => {
+const Persons = ({ ListPersons, handleDelete}) => {
   return (
     <div>
-      {filter.map((e) => (
-        <Contact name={e.name} number={e.number}></Contact>
+      {ListPersons.map((e) => (
+        <Contact
+          name={e.name}
+          number={e.number}
+          key={e.id}
+          id={e.id}
+          handleDelete={handleDelete}
+        ></Contact>
       ))}
     </div>
   );
@@ -42,8 +49,8 @@ const App = () => {
   const [newFilter, setNewFilter] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    personServices.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -51,18 +58,16 @@ const App = () => {
   const handleNewNumber = (e) => setNewNumber(e.target.value);
   const handleFilter = (e) => setNewFilter(e.target.value);
 
-  const filter = persons.map((e) =>
-    e.name.toLowerCase().includes(newFilter.toLowerCase())
-  )
+  const filter = persons.map((e) => {
+    e.name.toLowerCase().includes(newFilter.toLowerCase());
+  })
     ? persons.filter((e) => e.name.toLowerCase().includes(newFilter))
     : persons;
-  console.log(filter);
 
   const add = (event) => {
     event.preventDefault();
     let pre = true;
     persons.map((e) => {
-      console.log("new name:", newName);
       if (e.name === newName) {
         pre = false;
       }
@@ -70,16 +75,22 @@ const App = () => {
     const newObjeto = { name: newName, number: newNumber };
 
     pre
-      ? axios
-          .post("http://localhost:3001/persons", newObjeto)
-          .then((response) => {
-            setPersons(persons.concat(response.data));
-            setNewName("");
-            setNewNumber("");
-          })
+      ? personServices.create(newObjeto).then((returnedNote) => {
+          setPersons(persons.concat(returnedNote));
+          setNewName('');
+          setNewNumber('');  
+        })
       : alert(`${newName} is already added to phonebook`);
   };
-  console.log(persons);
+
+  const handleDelete = (id) => {
+    const person = persons.find(n => id===n.id ) 
+    if (window.confirm(`remover a ${person.name}`)) {
+      personServices
+        .remove(id)
+      setPersons(persons.filter(person => person.id !== id))
+    }
+  };
 
   return (
     <div>
@@ -92,7 +103,7 @@ const App = () => {
         handleNewNumber={handleNewNumber}
       />
       <h2>Numbers</h2>
-      <Persons filter={filter}></Persons>
+      <Persons ListPersons={filter} handleDelete={handleDelete}></Persons>
     </div>
   );
 };
