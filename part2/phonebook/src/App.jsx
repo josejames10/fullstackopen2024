@@ -11,14 +11,20 @@ const Filter = ({ handleFilter }) => {
     </div>
   );
 };
-const PersonsForm = ({ add, handleNewName, handleNewNumber }) => {
+const PersonsForm = ({
+  add,
+  handleNewName,
+  handleNewNumber,
+  newName,
+  newNumber,
+}) => {
   return (
     <form onSubmit={add}>
       <div>
-        name: <input onChange={handleNewName} />
+        name: <input onChange={handleNewName} value={newName} />
       </div>
       <div>
-        number: <input onChange={handleNewNumber} />
+        number: <input onChange={handleNewNumber} value={newNumber} />
       </div>
       <div>
         <button type="submit">add</button>
@@ -26,7 +32,7 @@ const PersonsForm = ({ add, handleNewName, handleNewNumber }) => {
     </form>
   );
 };
-const Persons = ({ ListPersons, handleDelete}) => {
+const Persons = ({ ListPersons, handleDelete }) => {
   return (
     <div>
       {ListPersons.map((e) => (
@@ -57,7 +63,6 @@ const App = () => {
   const handleNewName = (e) => setNewName(e.target.value);
   const handleNewNumber = (e) => setNewNumber(e.target.value);
   const handleFilter = (e) => setNewFilter(e.target.value);
-
   const filter = persons.map((e) => {
     e.name.toLowerCase().includes(newFilter.toLowerCase());
   })
@@ -66,29 +71,31 @@ const App = () => {
 
   const add = (event) => {
     event.preventDefault();
-    let pre = true;
-    persons.map((e) => {
-      if (e.name === newName) {
-        pre = false;
+    const person = persons.filter((p) => p.name === newName);
+    const newObjeto = {name: newName, number: newNumber };
+    if (person.length===0) {
+      personServices.create(newObjeto).then((returnedNote) => {
+        setPersons(persons.concat(returnedNote));
+        setNewName("");
+        setNewNumber("");
+      });
+    } else {
+      if (window.confirm(`${newName} is already to phonebook, replace the old number with a new one?`)) {
+        personServices
+          .upData(person[0].id, newObjeto)
+          .then((Response) =>
+            setPersons(persons.map((e) => (e.id !== person[0].id ? e : Response)))
+          );
       }
-    });
-    const newObjeto = { name: newName, number: newNumber };
-
-    pre
-      ? personServices.create(newObjeto).then((returnedNote) => {
-          setPersons(persons.concat(returnedNote));
-          setNewName('');
-          setNewNumber('');  
-        })
-      : alert(`${newName} is already added to phonebook`);
+    }
   };
 
   const handleDelete = (id) => {
-    const person = persons.find(n => id===n.id ) 
+    const person = persons.find((n) => id === n.id);
     if (window.confirm(`remover a ${person.name}`)) {
-      personServices
-        .remove(id)
-      setPersons(persons.filter(person => person.id !== id))
+      console.log();
+      personServices.remove(id);
+      setPersons(persons.filter((person) => person.id !== id));
     }
   };
 
@@ -101,6 +108,8 @@ const App = () => {
         add={add}
         handleNewName={handleNewName}
         handleNewNumber={handleNewNumber}
+        newName={newName}
+        newNumber={newNumber}
       />
       <h2>Numbers</h2>
       <Persons ListPersons={filter} handleDelete={handleDelete}></Persons>
