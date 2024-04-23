@@ -59,13 +59,20 @@ app.post('/api/persons', (request, response) => {
         error: 'content missing' 
       })
     }
-    const name=persons.filter(e=>e.name===body.name)
-    const number=persons.filter(e=>e.number===body.number)
-    if (name || number) {
+    
+    let name=persons.filter(e=>e.name===body.name)
+    let number=persons.filter(e=>e.number===body.number)
+    console.log(name.length)
+    if (name.length)  {
       return response.status(400).json({
         error: 'name must be unique'
       })
-    } 
+    }
+    if(number.length) {
+      return response.status(400).json({
+        error: 'number must be unique'
+      })
+    }
     const person = {
       name: body.name,
       number: body.number,
