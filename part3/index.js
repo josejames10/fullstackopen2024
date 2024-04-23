@@ -3,7 +3,7 @@ const app = express()
 
 app.use(express.json())
 
-[
+let persons=[
   { 
     "id": 1,
     "name": "Arto Hellas", 
@@ -25,30 +25,38 @@ app.use(express.json())
     "number": "39-23-6423122"
   }
 ]
+const generateId = () => {
+  const maxId = persons.length > 0
+    ? Math.max(...persons.map(n => n.id))
+    : 0
+  return maxId + 1
+}
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/notes', (request, response) => {
-  response.json(notes)
+app.get('/api/info', (request, response) => {
+  let length= persons.length.toString()
+  let data=new Date()
+  response.send(`Phonebook has info for ${length} people<br/>${data.toString()}`)
+})
+
+app.get('/api/persons', (request, response) => {
+  response.json(persons)
 }) 
-app.get('/api/notes/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const note = notes.find(note => note.id === id)
-    if (note) {
-        response.json(note)
+    const person
+     = persons.find(person=> person.id === id)
+    if (person
+    ) {
+        response.json(person
+        )
     } else {
         response.status(404).end()
     }
   })
-  const generateId = () => {
-    const maxId = notes.length > 0
-      ? Math.max(...notes.map(n => n.id))
-      : 0
-    return maxId + 1
-  }
-  
-app.post('/api/notes', (request, response) => {
+app.post('/api/persons', (request, response) => {
     const body = request.body
     console.log(body);
     if (!body.content) {
@@ -57,15 +65,15 @@ app.post('/api/notes', (request, response) => {
       })
     }
   
-    const note = {
+    const person = {
       content: body.content,
       important: Boolean(body.important) || false,
       id: generateId(),
     }
   
-    notes = notes.concat(note)
+    persons = persons.concat(person)
   
-    response.json(note)
+    response.json(person)
   })
 const PORT = 3001
 app.listen(PORT, () => {
