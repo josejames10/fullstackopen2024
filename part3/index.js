@@ -35,7 +35,7 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/info', (request, response) => {
+app.get('/info', (request, response) => {
   let length= persons.length.toString()
   let data=new Date()
   response.send(`Phonebook has info for ${length} people<br/>${data.toString()}`)
@@ -45,17 +45,15 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 }) 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person
-     = persons.find(person=> person.id === id)
-    if (person
-    ) {
-        response.json(person
-        )
-    } else {
-        response.status(404).end()
+    const id =Number(request.params.id)
+    const person = persons.find(e=> e.id === id )
+    console.log(person);
+    if(!person){
+      response.status(404).end()
     }
-  })
+    response.json(person)
+
+})
 app.post('/api/persons', (request, response) => {
     const body = request.body
     console.log(body);
