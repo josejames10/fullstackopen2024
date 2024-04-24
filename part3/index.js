@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
-var morgan= require('morgan')
 
 app.use(express.json())
+var morgan= require('morgan')
 
 let persons=[
   { 
@@ -26,8 +26,10 @@ let persons=[
     "number": "39-23-6423122"
   }
 ]
-let registro=app.use(morgan('tiny'))
-console.log("morgan",registro);
+
+morgan.token('body', function (req, res) { return JSON.stringify(req.body)})
+app.use(morgan(':method :url :status :response-time ms  :body '))
+
 const generateId = () => {
   const Id = Math.floor(Math.random()*10000)
   return Id
@@ -46,51 +48,51 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 }) 
 app.get('/api/persons/:id', (request, response) => {
-    const id =Number(request.params.id)
-    const person = persons.find(e=> e.id === id )
-    if(!person){
-      response.status(404).end()
-    }
-    response.json(person)
-
+  const id =Number(request.params.id)
+  const person = persons.find(e=> e.id === id )
+  if(!person){
+    response.status(404).end()
+  }
+  response.json(person)
+  
 })
 app.post('/api/persons', (request, response) => {
-    const body = request.body
-    if (!body.name) {
-      return response.status(400).json({ 
-        error: 'content missing' 
-      })
-    }
-    
-    let name=persons.filter(e=>e.name===body.name)
-    let number=persons.filter(e=>e.number===body.number)
-    console.log(name.length)
-    if (name.length)  {
-      return response.status(400).json({
-        error: 'name must be unique'
-      })
-    }
-    if(number.length) {
-      return response.status(400).json({
-        error: 'number must be unique'
-      })
-    }
-    const person = {
-      name: body.name,
-      number: body.number,
-      id: generateId(),
-    }
-    
-
-    persons = persons.concat(person)
-    response.json(person)
-  })
+  const body = request.body
+  if (!body.name) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
   
-  app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
+  let name=persons.filter(e=>e.name===body.name)
+  let number=persons.filter(e=>e.number===body.number)
+  console.log(name.length)
+  if (name.length)  {
+    return response.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+  if(number.length) {
+    return response.status(400).json({
+      error: 'number must be unique'
+    })
+  }
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  }
+  
+  
+  persons = persons.concat(person)
+  response.json(person)
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
     const person = persons.filter(persons => persons.id !== id)
-//    persons=person
-      
+    //    persons=person
+    
     response.status(204).end()
 })
 
