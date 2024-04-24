@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+var morgan= require('morgan')
 
 app.use(express.json())
 
@@ -25,6 +26,8 @@ let persons=[
     "number": "39-23-6423122"
   }
 ]
+let registro=app.use(morgan('tiny'))
+console.log("morgan",registro);
 const generateId = () => {
   const Id = Math.floor(Math.random()*10000)
   return Id
@@ -45,7 +48,6 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     const id =Number(request.params.id)
     const person = persons.find(e=> e.id === id )
-    console.log(person);
     if(!person){
       response.status(404).end()
     }
