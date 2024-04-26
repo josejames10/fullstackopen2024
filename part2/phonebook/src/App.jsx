@@ -54,7 +54,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
-  const [notification, setNotification] = useState([null, "notification"]);
+  const [notification, setNotification] = useState([null]);
+
   useEffect(() => {
     personServices.getAll().then((initialPersons) => {
       setPersons(initialPersons);

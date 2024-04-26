@@ -95,7 +95,7 @@ app.post('/api/persons', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
     const person = persons.filter(persons => persons.id !== id)
-    //    persons=person
+      persons=person
     
     response.status(204).end()
 })
