@@ -3,8 +3,9 @@ const app = express()
 app.use(express.static('dist'))
 app.use(express.json())
 var morgan= require('morgan')
+const Person = require('./models/person')
 
-let persons=[
+/* let persons=[ 
   { 
     "id": 1,
     "name": "Arto Hellas", 
@@ -25,10 +26,13 @@ let persons=[
     "name": "Mary Poppendieck", 
     "number": "39-23-6423122"
   }
-]
+] */
 const cors = require('cors')
 
 app.use(cors())
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
 morgan.token('body', function (req, res) { return JSON.stringify(req.body)})
 app.use(morgan(':method :url :status :response-time ms  :body '))
@@ -48,8 +52,12 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  console.log("Pesons:+++++++",Person)
+  Person.find({}).then(p => {
+    response.json(p)
+  })
 }) 
+
 app.get('/api/persons/:id', (request, response) => {
   const id =Number(request.params.id)
   const person = persons.find(e=> e.id === id )

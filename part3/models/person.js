@@ -1,3 +1,4 @@
+var morgan= require('morgan')
 const mongoose=require('mongoose')
 
 if (process.argv.length<3){
@@ -23,19 +24,20 @@ module.exports = mongoose.model('Person',personSchema)
     Person.find({}).then(result=>{
         result.forEach(person =>{
             console.log(person)})
+        }
         //mongoose.connection.close()
-    })
-}else{
-const person = new Person({
-    name: process.argv[3],
-    number: process.argv[4],
-})
-
-person.save().then(result =>{
-    console.log(`added ${process.argv[3]} number${process.argv[4]} to phonebook`)
-    mongoose.connection.close()
-}
-
-)
-}
- */
+    )
+        
+    }else{
+        const person = new Person({
+            name: process.argv[3],
+            number: process.argv[4],
+        })
+        
+        person.save().then(result =>{
+            console.log(`added ${process.argv[3]} number${process.argv[4]} to phonebook`)
+            mongoose.connection.close()
+        }
+        
+    )
+} */
