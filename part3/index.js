@@ -67,6 +67,7 @@ app.get('/api/persons/:id', (request, response) => {
   response.json(person)
   
 })
+
 app.post('/api/persons', (request, response) => {
   const body = request.body
   if (!body.name) {
@@ -74,10 +75,8 @@ app.post('/api/persons', (request, response) => {
       error: 'content missing' 
     })
   }
-  
-  
-  let name=persons.filter(e=>e.name===body.name)
-  let number=persons.filter(e=>e.number===body.number)
+  /* let name=Person.filter(e=>e.name===body.name)
+  let number=Person.filter(e=>e.number===body.number)
   console.log(name.length)
   if (name.length)  {
     return response.status(400).json({
@@ -88,16 +87,14 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'number must be unique'
     })
-  }
-  const person = {
+  } */
+  const person =new Person( {
     name: body.name,
-    number: body.number,
-    id: generateId(),
-  }
-  
-  
-  persons = persons.concat(person)
-  response.json(person)
+    number: body.number
+  })
+  person.save().then(personSaved=>{
+    response.json(personSaved)
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {

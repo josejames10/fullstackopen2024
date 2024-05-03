@@ -1,25 +1,23 @@
-var morgan= require('morgan')
-const mongoose=require('mongoose')
 
-if (process.argv.length<3){
-    console.log('give password as argument')
-  
-    process.exit(1)
-}
-const password = process.argv[2]
+const mongoose = require('mongoose');
+mongoose.set('strictQuery', false);
 
-const url = `mongodb+srv://fullstack:${password}@cluster0.57f60cv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
+const url = process.env.M;
+console.log("url:", url);
 
-mongoose.set('strictQuery',false)
-
-mongoose.connect(url)
+mongoose.connect(url).then(result => {
+    console.log('connected to MongoDB');
+})
+    .catch(error => {
+        console.log('error connecting to MongoDB:', error.message);
+    })
 
 const personSchema = new mongoose.Schema({
     name: String,
     number: String,
 })
 
-module.exports = mongoose.model('Person',personSchema)
+module.exports = mongoose.model('Person', personSchema)
 /* if (process.argv.length<4){
     Person.find({}).then(result=>{
         result.forEach(person =>{
