@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 
-const url = process.env.M;
+const url = process.env.MONGODB_URI;
 console.log("url:", url);
 
 mongoose.connect(url).then(result => {
@@ -13,8 +13,21 @@ mongoose.connect(url).then(result => {
     })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+        type: String,
+        minLength: 4,
+        required: true
+    },
+    number:{
+        type: String,
+        validate: {
+          validator: function(v) {
+            return /\d{2,3}-\d{5,10}/.test(v);
+          },
+          message: props => `${props.value} is not a valid phone number!`
+        },
+        required: [true, 'User phone number required']
+      }
 })
 
 module.exports = mongoose.model('Person', personSchema)
