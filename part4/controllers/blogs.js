@@ -1,47 +1,44 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 
-blogRouter.get('/',(request, response) =>{
-  Blog.find({}).then(blogs=>{
-    response.json(blogs)
-  })
+blogRouter.get('/',async(request, response) =>{
+    const blog = await Blog.find({})
+    response.json(blog)
 })
 
-blogRouter.get('/:id',(request, response, next) =>{
-    Blog.findById(request.params.id)
-    .then(blog=>{
-     if(blog){
-        response.json(blog)
-     } else {
+blogRouter.get('/:id',async(request, response) =>{
+    const blog = await Blog.findById(request.params.id)
+    if(blog){
+    response.json(blog)
+    } else {
         response.status(404).end()
-     }
+    }
     })
-    .catch(e=>next(error))
+    
+blogRouter.post('/',async(request, response)=>{
+    if (!request.body.title || !request.body.url) {
+        response.status(400).end()
+    } else {
+    const blog = new Blog({
+        title: request.body.title,
+        author: request.body.author,
+        url: request.body.url,
+        likes: request.body.likes || 0,
+    })
+    const saveBlog = await blog.save()
+    response.status(201).json(saveBlog)
+}
 })
 
-blogRouter.post('/',(request, response, next)=>{
-    const blog = new Blog(request.body)
-    blog.save()
-    .then(saveBlog => {
-        response.json(saveBlog)
-    })
-    .catch(e => next(e))
+blogRouter.delete('/:id',async(request, response) =>{
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end()
 })
 
-blogRouter.delete('/:id',(request, response, next) =>{
-    Blog.findByIdAndDelete(request.params.id)
-    .then(() => {
-        response.status(204).end()
-    })
-    .catch(e=>next(e))
-})
-
-blogRouter.put('/:id',(request, response, next) =>{
-    Blog.findByIdAndUpdate(request.params.id,request.body,{new: true})
-    .then(updatedBlog =>{
-        response.json(updatedBlog)
-    })
-    .catch(e=>next(e))
+blogRouter.put('/:id',async(request, response) =>{
+    const updateBlog = await Blog.findByIdAndUpdate(request.params.id,request.body,{new: true})
+        console.log(updateBlog)
+        response.json(updateBlog)
 })
 
 module.exports = blogRouter
