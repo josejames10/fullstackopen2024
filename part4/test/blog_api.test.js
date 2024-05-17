@@ -108,6 +108,7 @@ test('a specific blog can be viewed', async () => {
   assert.deepStrictEqual(resultBlog.body, blogToView)
 })
 
+//4.13 Blog List Expansions, step 1
 test('a blog can be deleted', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
@@ -123,6 +124,28 @@ test('a blog can be deleted', async () => {
   assert(!title.includes(blogToDelete.title))
 
   assert.strictEqual(blogsAtEnd.length, helper.initialBlog.length - 1)
+})
+
+//4.14 Blog List Expansions, step 2
+test('update information for an individual blog post',async () =>{
+  const newBlog =   {
+    title: 'blog',
+    author: 'blog',
+    url: 'url',
+    likes: 100
+  }
+  const blogsAtStart = await helper.blogsInDb()
+  const blogUpdate = blogsAtStart[0]
+  blogUpdate._id= blogUpdate._id.toString()
+
+  await api
+    .put(`/api/blogs/${blogUpdate._id}`)
+    .send(newBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  const blogsAtEnd = await helper.blogsInDb()
+
+  assert.strictEqual(blogsAtEnd[0].likes, 100)
 })
 
 after(async () => {
