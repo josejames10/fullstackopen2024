@@ -40,11 +40,17 @@ test('the first blog is about blog', async () => {
   })
 
 test('a valid blog can be added ', async () => {
+  const userId= await helper.usersInDb()
+  console.log("id",userId)
+  const Id = userId[0].id
+  console.log("id__",Id)
+
   const newBlog = {
     title: 'blog lol',
     author: 'blog3',
     url: 'url3',
-    likes: 23
+    likes: 23,
+    user: userId
 }
 
   await api
@@ -195,12 +201,59 @@ describe('when there is initially one user at db', () => {
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
-    console.log('usersAtEnd',usersAtEnd)
     assert(result.body.error.includes('expected `username` to be unique'))
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 })
+
+describe('when new users are created',() =>{
+  beforeEach(async () => {
+    await  User.deleteMany({})
+    
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+      username: 'root',
+      name: 'root',
+      passwordHash
+    })
+    await user.save()
+  })
+
+  test('a user is not created with an invalid username', async () => {
+    const usersAtStart = await User.find({})
+    const newUser = {
+      username: 'ro',
+      password: 'password'
+    }
+    const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('User validation failed: username: Path `username`'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+  test('a user is not created with an invalid password', async () => {
+    const usersAtStart = await User.find({})
+    const newUser = {
+      username: 'jose',
+      password: 'pa'
+    }
+    const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('enter more than three characters password'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
