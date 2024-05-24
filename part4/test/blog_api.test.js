@@ -34,40 +34,40 @@ test('there are two blogs', async () => {
   
 test('the first blog is about blog', async () => {
     const response = await api.get('/api/blogs')
-
     const title = response.body.map(e => e.title )
+    
     assert.strictEqual(title.includes('blog'), true)
   })
+// refactori 4.23
+test.only('a valid blog can be added ', async () => {
+  const newLogin = {
+    username: "root",
+    password: "sekret"
+  }
 
-test('a valid blog can be added ', async () => {
-  const userId= await helper.usersInDb()
-  console.log("id",userId)
-  const Id = userId[0].id
-  console.log("id__",Id)
+let token=""
+  const login = await api.post('/api/login').send(newLogin)
+  .expect(function(res){
+    token=res.body.token})
+
 
   const newBlog = {
-    title: 'blog lol',
-    author: 'blog3',
-    url: 'url3',
-    likes: 23,
-    user: userId
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 12
 }
-
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `bearer ${token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
   const blogAtEnd = await helper.blogsInDb()
-
-  //const response = await api.get('/api/blogs')
-
   const titles = blogAtEnd.map(r => r.title)
-   
   assert.strictEqual(blogAtEnd.length, helper.initialBlog.length + 1)
-
-  assert(titles.includes('blog lol'))
+  assert(titles.includes('Canonical string reduction'))
 })
 //4.11*: Blog List Tests, step 4
 test('averify that the like property has 0 if it is not filled', async () => {
