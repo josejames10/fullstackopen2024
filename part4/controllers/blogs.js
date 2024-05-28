@@ -28,6 +28,7 @@ blogRouter.post('/',async(request, response)=>{
         likes: request.body.likes || 0,
         user: user._id
     })
+
     const saveBlog = await blog.save()
     user.blog = user.blog.concat(saveBlog._id)
     await user.save()
@@ -36,11 +37,8 @@ blogRouter.post('/',async(request, response)=>{
 
 
 blogRouter.delete('/:id',async(request, response) =>{
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-     response.status(401).json({error: ' token invalid ' })
-    }
-    const user = await User.findById(decodedToken.id)
+   
+    const user = request.user
     const blog = await Blog.findById(request.params.id)
     if (user.id.toString()!== blog.user.toString()){
         response.status(401).json({error: ' token invalid ' })

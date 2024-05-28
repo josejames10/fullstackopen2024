@@ -40,17 +40,7 @@ test('the first blog is about blog', async () => {
   })
 // refactori 4.23
 test.only('a valid blog can be added ', async () => {
-  const newLogin = {
-    username: "root",
-    password: "sekret"
-  }
-
-let token=""
-  const login = await api.post('/api/login').send(newLogin)
-  .expect(function(res){
-    token=res.body.token})
-
-
+  const token=await helper.tokenGet()
   const newBlog = {
     title: "Canonical string reduction",
     author: "Edsger W. Dijkstra",
@@ -70,41 +60,46 @@ let token=""
   assert(titles.includes('Canonical string reduction'))
 })
 //4.11*: Blog List Tests, step 4
-test('averify that the like property has 0 if it is not filled', async () => {
+test.only('averify that the like property has 0 if it is not filled', async () => {
+    const token = await helper.tokenGet()
+    
   const newBlog = {
-    title: 'blog lol',
-    author: 'blog3',
-    url: 'url3'
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 0
 }
-
-  const blog = await api
+const blog =await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `bearer ${token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
   const blogAtEnd = await helper.blogsInDb()
-
   console.log('likes',blog.body.likes)
   assert.strictEqual(blogAtEnd.length, helper.initialBlog.length + 1)
   assert.strictEqual(blog.body.likes,0)
 })
 
 //4.12*: Blog List tests, step 5
-test('If the title or url properties do not exist, the server responds with the status code 400', async () => {
+test.only('If the title or url properties do not exist, the server responds with the status code 400', async () => {
+  const token = await helper.tokenGet()
+  
   const newBlog = {
-    author: 'blog3',
-    likes: 1
+    author: 'blog3'
   }
-  const blog = await api
+   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `bearer ${token}`)
     .expect(400)
+
     const blogAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogAtEnd.length, helper.initialBlog.length)
 })
 
-test('a specific blog can be viewed', async () => {
+test.only('a specific blog can be viewed', async () => {
   const blogsAtStart = await helper.blogsInDb()
   let blogToView = blogsAtStart[0]
   blogToView._id = blogToView._id.toString()
@@ -117,10 +112,13 @@ test('a specific blog can be viewed', async () => {
 })
 
 //4.13 Blog List Expansions, step 1
-test('a blog can be deleted', async () => {
+test.only('a blog can be deleted', async () => {
+
+
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
   blogToDelete._id= blogToDelete._id.toString()
+  console.log(blogToDelete);
 
   await api
     .delete(`/api/blogs/${blogToDelete._id}`)

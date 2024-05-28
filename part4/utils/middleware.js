@@ -39,7 +39,7 @@ const tokenExtractor = (request, response, next) => {
       request.token=authorization.replace('bearer ','')
       return next()
   }
-  request.token=null
+ request.token=null
   return next()
 }
 const userExtractor = async(request, response, next) => {
@@ -50,9 +50,6 @@ const userExtractor = async(request, response, next) => {
       return response.status(401).json({error : 'token invalid'})
   }
   request.user = await User.findById(decodedToken.id)
-    if(!request.user){
-      return response.status(401).json({error : 'token invalid n'})
-    }
     return next()
   }
   request.user = null
