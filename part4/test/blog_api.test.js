@@ -120,9 +120,6 @@ test('a specific blog can be viewed', async () => {
     .get(`/api/blogs/${blogToView}`)
     .expect(200)
     .expect('Content-Type', /application\/json/)
-    console.log("1:",resultBlog.body)
-    console.log("2:",blogsAtStart[0])
-
   assert.deepStrictEqual(resultBlog.body, blogsAtStart[0])
 })
 
@@ -222,7 +219,6 @@ describe('when there is initially one user at db', () => {
 describe('when new users are created',() =>{
   beforeEach(async () => {
     await  User.deleteMany({})
-    
     const passwordHash = await bcrypt.hash('sekret', 10)
     const user = new User({
       username: 'root',
@@ -279,8 +275,7 @@ test("There's a blog post uploaded without authorization", async () => {
     .post('/api/blogs')
     .set('Authorization', `bearer ${token}`)
     .send(newBlog)
-    .expect(401)
-    
+    .expect(401)  
     const usersAtEnd = await helper.usersInDb()
     assert(result.body.error.includes('token invalid'))
 
