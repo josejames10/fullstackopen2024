@@ -10,7 +10,8 @@ const initialBlog = [
       title: 'blog',
       author: 'blog',
       url: 'url',
-      likes: 2
+      likes: 2,
+    
   },
   {
       title: 'blog2',
@@ -22,8 +23,8 @@ const initialBlog = [
 
 const tokenGet = async () => {
   const newLogin = {
-    username: "root",
-    password: "sekret"
+    username: "luis",
+    password: "password"
   }
   let token=""
     await api.post('/api/login').send(newLogin)
