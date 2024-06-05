@@ -11,6 +11,16 @@ const App = () => {
 
 
   useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+
+    if (loggedUserJSON) {
+      const login = JSON.parse(loggedUserJSON)
+      setUser(login)
+      //  blogService.setToken(user.token)
+    }
+
+  }, [])
+  useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
     )
@@ -20,14 +30,15 @@ const App = () => {
     event.preventDefault()
 
     try {
-      console.log('user')
       const user = await loginService.login({
         username, password,
       })
+      window.localStorage.setItem(
+        'loggedNoteappUser', JSON.stringify(user)
+      )
       setUser(user)
       setUsername('')
       setPassword('')
-      console.log(user)
     } catch (exception) {
       console.log(exception)
       console.log('login no iniciado')
@@ -57,14 +68,21 @@ const App = () => {
     </form>
   )
 
+
   return (
     <div>
       {!user && loginForm()}
       {user && <div>
         <h2>blogs</h2>
+        <button onClick={() => {
+          window.localStorage.clear()
+          setUser(null)
+        }}>cerrar sesion</button>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
+        <></>
+
       </div>
       }
     </div>
