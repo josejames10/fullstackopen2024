@@ -7,9 +7,23 @@ const setToken = newToken => {
   token = `bearer ${newToken}`
 }
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = async () => {
+  try {
+    const response = await axios.get(baseUrl)
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener datos:", error)
+    throw error
+  }
 }
 
-export default { getAll,setToken }
+const create = async newObjeto => {
+  const config = {
+    headers : {Authorization : token},
+  }
+  const response = await axios.post(baseUrl, newObjeto, config)
+  return response.data
+
+}
+
+export default { getAll,setToken, create }
