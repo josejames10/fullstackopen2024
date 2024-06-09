@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -9,6 +11,7 @@ const App = () => {
   const [password, setPassword] = useState()
   const [user, setUser] = useState(null)
   const [create, setCreate] = useState({ title: "", author: "", url: "" })
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -17,7 +20,6 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-
   }, [])
 
   useEffect(() => {
@@ -40,8 +42,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.log(exception)
-      console.log('login no iniciado')
+      setErrorMessage('wrong credentials')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
   const loginForm = () => (
@@ -63,7 +67,7 @@ const App = () => {
           name="Password"
           onChange={({ target }) => setPassword(target.value)} />
       </div>
-      <button type="submit">create</button>
+      <button type="submit">login</button>
     </form>
   )
 
@@ -76,6 +80,10 @@ const App = () => {
     }
     const returnBlog = await blogService.create(newObject)
     setBlogs(blogs.concat(returnBlog))
+    setErrorMessage(`a new blog ${create.title} by ${create.author}`)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
     setCreate({ url: "", author: "", title: "" })
   }
 
@@ -108,23 +116,24 @@ const App = () => {
           onChange={({ target }) => setCreate({ ...create, url: target.value })}
         />
       </div>
-      <button type="submit">login</button>
+      <button type="submit">create</button>
     </form>
   )
 
   return (
     <div>
+      <h1>blogs</h1>
+      <Notification message={errorMessage} />
       {!user && loginForm()}
       {user && <div>
-        <h2>blogs</h2>
+        <p>{user.name} logged in</p>
         <button onClick={() => {
           window.localStorage.clear()
           setUser(null)
         }}>cerrar sesion</button>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog._id} blog={blog} />
         )}
-
         {createBlog()}
       </div>
       }
