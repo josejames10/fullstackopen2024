@@ -10,7 +10,6 @@ const App = () => {
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
   const [user, setUser] = useState(null)
-  const [create, setCreate] = useState({ title: "", author: "", url: "" })
   const [errorMessage, setErrorMessage] = useState(null)
   const [blogVisible, setBlogVisible] = useState(false)
 
@@ -74,20 +73,20 @@ const App = () => {
     </form>
   )
 
-  const handleCreate = async (event) => {
-    event.preventDefault()
+  const handleCreate = async (blogObject) => {
+    /* event.preventDefault()
     const newObject = {
       title: create.title,
       author: create.author,
       url: create.url,
-    }
-    const returnBlog = await blogService.create(newObject)
+    } */
+    const returnBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnBlog))
-    setErrorMessage(`a new blog ${create.title} by ${create.author}`)
+   // setErrorMessage(`a new blog ${create.title} by ${create.author}`)
     setTimeout(() => {
       setErrorMessage(null)
     }, 5000)
-    setCreate({ url: "", author: "", title: "" })
+   
   }
 
   const createBlog = () => {
@@ -100,12 +99,7 @@ const App = () => {
         </div>
         <div style={showWhenVisible}>
           <BlogForm
-            title={create.title}
-            author={create.author}
-            url={create.url}
-            handleTitleChange={({ target }) => setCreate({ ...create, title : target.value})}
-            handleAuthorChange={({ target }) => setCreate({ ...create, author : target.value})}
-            handleUrlChange={({ target }) => setCreate({ ...create, url : target.value})}
+        
             handleSubmit={handleCreate}
             ></BlogForm>
           <button onClick={() => setBlogVisible(false)}>cancel</button>
