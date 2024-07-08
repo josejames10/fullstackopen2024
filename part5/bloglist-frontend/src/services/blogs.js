@@ -10,7 +10,7 @@ const setToken = newToken => {
 const getAll = async () => {
   try {
     const response = await axios.get(baseUrl)
-    return response.data;
+    return response.data
   } catch (error) {
     console.error("Error al obtener datos:", error)
     throw error
@@ -23,7 +23,11 @@ const create = async newObjeto => {
   }
   const response = await axios.post(baseUrl, newObjeto, config)
   return response.data
-
 }
 
-export default { getAll,setToken, create }
+const aumentarLike = async (id,newObjeto) =>{
+ 
+  const response = await axios.put(`${baseUrl}/${id}`, newObjeto)
+}
+
+export default { getAll, setToken, create, aumentarLike}
