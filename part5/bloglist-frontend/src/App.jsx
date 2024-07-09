@@ -25,13 +25,12 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs(blogs.sort((a, b) => (b.likes || 0) - (a.likes || 0)))
     )
   }, [])
-
+  console.log("hoal",blogs)
   const handleLogin = async (event) => {
     event.preventDefault()
-
     try {
       const user = await loginService.login({
         username, password,
@@ -82,13 +81,27 @@ const App = () => {
     } */
     const returnBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnBlog))
-   // setErrorMessage(`a new blog ${create.title} by ${create.author}`)
+    // setErrorMessage(`a new blog ${create.title} by ${create.author}`)
     setTimeout(() => {
       setErrorMessage(null)
     }, 5000)
-   
   }
+  const handleLikes = async () => {
+    /* event.preventDefault()
+    const newObject = {
+      title: create.title,
+      author: create.author,
+      url: create.url,
+    } */
 
+    const returnBlog = await blogService.create(blogObject)
+    setBlogs(blogs.concat(returnBlog))
+    // setErrorMessage(`a new blog ${create.title} by ${create.author}`)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+
+  }
   const createBlog = () => {
     const hideWhenVisible = { display: blogVisible ? 'none' : '' }
     const showWhenVisible = { display: blogVisible ? '' : 'none' }
@@ -99,9 +112,8 @@ const App = () => {
         </div>
         <div style={showWhenVisible}>
           <BlogForm
-        
             handleSubmit={handleCreate}
-            ></BlogForm>
+          ></BlogForm>
           <button onClick={() => setBlogVisible(false)}>cancel</button>
         </div>
       </div>
