@@ -29,5 +29,9 @@ const aumentarLike = async (id,newObjeto) =>{
  
   const response = await axios.put(`${baseUrl}/${id}`, newObjeto)
 }
+const deleteBlog = async (id) =>{
+  const response = await axios.delete(`${baseUrl}/${id}`)
 
-export default { getAll, setToken, create, aumentarLike}
+}
+
+export default { getAll, setToken, create, aumentarLike, deleteBlog}

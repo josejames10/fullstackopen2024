@@ -28,7 +28,6 @@ const App = () => {
       setBlogs(blogs.sort((a, b) => (b.likes || 0) - (a.likes || 0)))
     )
   }, [])
-  console.log("hoal",blogs)
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -132,7 +131,7 @@ const App = () => {
           setUser(null)
         }}>cerrar sesion</button>
         {blogs.map(blog =>
-          <Blog key={blog._id} blog={blog} />
+          <Blog key={blog._id} blog={blog} user={user.username}/>
         )}
         {createBlog()}
       </div>

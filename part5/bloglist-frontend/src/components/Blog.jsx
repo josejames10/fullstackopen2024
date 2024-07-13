@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog , user }) => {
   const [view, setView] = useState(false)
   const hideWhenVisible = { display: view ? 'none' : '' }
   const showWhenVisible = { display: view ? '' : 'none' }
   const [like,setLike] = useState(blog.likes)
+  const [eliminar, setEliminar] = useState(true)
+  const hideBlog = { display: eliminar ? '' : 'none' }
   
   const blogStyle = {
     paddingTop: 10,
@@ -29,8 +31,16 @@ const Blog = ({ blog }) => {
     const returnBlog = await blogService.aumentarLike(blog._id,newObject)
     setLike(likes)
   }
+  const handleDelete = async () => {
+    if (window.confirm(`Eliminarás el blog con el nombre ${blog.title}`)) {
+      await blogService.deleteBlog(blog._id)
+    }
+    setEliminar(false)
+  }
 
   return (
+    <div style={hideBlog}>
+
     <div style={blogStyle}>
       {blog.title}
       <div style={hideWhenVisible}>
@@ -42,7 +52,13 @@ const Blog = ({ blog }) => {
         {blog.url}<br/>
         like: {like}
         <button onClick={handleLikes}>like</button>
+        <br/>
+        {user === blog.user.username ? (
+          <button onClick={handleDelete}>delete</button>
+        ):<></>}
+       
       </div>
+    </div>
     </div>
   )
 }
